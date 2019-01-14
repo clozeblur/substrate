@@ -14,7 +14,7 @@ use primitives::bytes;
 use primitives::{Ed25519AuthorityId, OpaqueMetadata};
 use runtime_primitives::{
 	ApplyResult, transaction_validity::TransactionValidity, Ed25519Signature, generic,
-	traits::{self, BlakeTwo256, Block as BlockT, StaticLookup}, create_runtime_str
+	traits::{self, BlakeTwo256, Block as BlockT, StaticLookup, AuthorityIdFor}, create_runtime_str,
 };
 use client::{
 	block_builder::api::{CheckInherentsResult, InherentData, self as block_builder_api},
@@ -223,10 +223,6 @@ impl_runtime_apis! {
 			VERSION
 		}
 
-		fn authorities() -> Vec<Ed25519AuthorityId> {
-			Consensus::authorities()
-		}
-
 		fn execute_block(block: Block) {
 			Executive::execute_block(block)
 		}
@@ -273,6 +269,12 @@ impl_runtime_apis! {
 	impl consensus_aura::AuraApi<Block> for Runtime {
 		fn slot_duration() -> u64 {
 			Aura::slot_duration()
+		}
+	}
+
+	impl consensus_authorities::AuthoritiesApi<Block> for Runtime {
+		fn authorities() -> Vec<AuthorityIdFor<Block>> {
+			Consensus::authorities()
 		}
 	}
 }
